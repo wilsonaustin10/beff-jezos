@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
-import { openai } from './openai'
+import { getOpenAI } from './openai'
 import { supabase } from './supabase'
 
 export interface ProcessedDocument {
@@ -21,6 +21,7 @@ export async function chunkText(text: string): Promise<string[]> {
 }
 
 export async function embedText(text: string): Promise<number[]> {
+  const openai = getOpenAI()
   const response = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: text,

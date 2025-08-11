@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { openai } from '@/lib/openai'
+import { getOpenAI } from '@/lib/openai'
 import { supabase } from '@/lib/supabase'
 import { embedText } from '@/lib/document-processor'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
       .join('\n\n---\n\n')
     
     // Create the chat completion
+    const openai = getOpenAI()
     const response = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [

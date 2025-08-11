@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processDocument } from '@/lib/document-processor'
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { checkAuth } from '@/lib/auth-check'
 
-// Disable worker to avoid issues in Next.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = false as any
-
 async function extractTextFromPDF(buffer: ArrayBuffer): Promise<string> {
+  // Dynamic import to avoid build-time issues
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs')
+  
+  // Disable worker to avoid issues in Next.js
+  ;(pdfjsLib as any).GlobalWorkerOptions.workerSrc = false
+  
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise
   let fullText = ''
   
