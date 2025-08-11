@@ -24,6 +24,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
 
   useEffect(() => {
+    // Skip auth check if supabase is not available (during build)
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+    
     const checkUser = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
@@ -37,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
@@ -48,6 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase])
 
   const signOut = async () => {
+    if (!supabase) return
+    
     try {
       await supabase.auth.signOut()
       router.push('/auth/login')

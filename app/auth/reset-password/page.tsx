@@ -13,6 +13,12 @@ export default function ResetPasswordPage() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!supabase) {
+      setError('Application is not properly configured')
+      return
+    }
+    
     setError(null)
     setMessage(null)
     setLoading(true)

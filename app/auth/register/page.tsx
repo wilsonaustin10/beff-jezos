@@ -16,6 +16,12 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!supabase) {
+      setError('Application is not properly configured')
+      return
+    }
+    
     setError(null)
     setLoading(true)
 
