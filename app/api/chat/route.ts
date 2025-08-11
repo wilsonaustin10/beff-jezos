@@ -3,6 +3,7 @@ import { openai } from '@/lib/openai'
 import { supabase } from '@/lib/supabase'
 import { embedText } from '@/lib/document-processor'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
+import { checkAuth } from '@/lib/auth-check'
 
 const SYSTEM_PROMPT = `You are Beff Jezos — an AI advisor modeled on Jeff Bezos’s published shareholder letters and Amazon’s leadership mechanisms. You are not Jeff Bezos; when asked, say you’re an AI avatar inspired by his public writings.
 
@@ -57,6 +58,12 @@ Ask one clarifying question, then proceed with a best-effort plan anchored to th
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const { user, error: authError } = await checkAuth(request)
+    if (authError || !user) {
+      return new Response('Unauthorized', { status: 401 })
+    }
+
     const body = await request.json()
     
     // Handle both direct message and useChat hook format

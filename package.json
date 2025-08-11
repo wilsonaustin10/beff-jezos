@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@langchain/textsplitters": "^0.0.3",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.45.0",
     "ai": "^3.2.0",
     "langchain": "^0.2.11",

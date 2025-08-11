@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processDocument } from '@/lib/document-processor'
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs'
+import { checkAuth } from '@/lib/auth-check'
 
 // Disable worker to avoid issues in Next.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = false as any
@@ -23,6 +24,15 @@ async function extractTextFromPDF(buffer: ArrayBuffer): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const { user, error: authError } = await checkAuth(request)
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const formData = await request.formData()
     const file = formData.get('file') as File
     const year = parseInt(formData.get('year') as string)
